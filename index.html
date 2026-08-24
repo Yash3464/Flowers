@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday! 🎂</title>
+  <meta name="description" content="A special birthday surprise made with love">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Background Music — PLACEHOLDER: Replace src with your .mp3 -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="birthday-music.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Mute / Unmute Button -->
+  <button id="muteBtn" class="mute-btn hidden" aria-label="Toggle music">
+    <svg class="icon-sound-on" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+    </svg>
+    <svg class="icon-sound-off" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <line x1="23" y1="9" x2="17" y2="15" />
+      <line x1="17" y1="9" x2="23" y2="15" />
+    </svg>
+  </button>
+
+  <canvas id="cursorCanvas"></canvas>
+
+  <div id="scrollProgress" class="scroll-progress hidden">
+    <div class="scroll-track">
+      <div class="scroll-fill" id="scrollFill"></div>
+      <div class="scroll-indicator" id="scrollIndicator">♥</div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION 1 — Lock Screen ═══ -->
+  <section id="lockScreen" class="section lock-screen">
+    <canvas id="lockBgCanvas" class="bg-canvas"></canvas>
+    <div class="lock-container" id="lockContainer">
+      <div class="lock-icon" id="lockIcon">
+        <svg viewBox="0 0 64 64" width="56" height="56" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="14" y="28" width="36" height="28" rx="4" />
+          <path id="lockShackle" d="M22 28V18a10 10 0 0 1 20 0v10" />
+          <circle cx="32" cy="41" r="3.5" fill="currentColor" stroke="none" />
+          <line x1="32" y1="44.5" x2="32" y2="49" stroke-width="2.5" />
+        </svg>
+      </div>
+      <p class="lock-subtitle">Enter the password</p>
+      <div class="password-display" id="passwordDisplay">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+      <div class="numpad" id="numpad">
+        <button class="numpad-btn" data-key="1">1</button>
+        <button class="numpad-btn" data-key="2">2</button>
+        <button class="numpad-btn" data-key="3">3</button>
+        <button class="numpad-btn" data-key="4">4</button>
+        <button class="numpad-btn" data-key="5">5</button>
+        <button class="numpad-btn" data-key="6">6</button>
+        <button class="numpad-btn" data-key="7">7</button>
+        <button class="numpad-btn" data-key="8">8</button>
+        <button class="numpad-btn" data-key="9">9</button>
+        <button class="numpad-btn action-btn" data-key="clear">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <button class="numpad-btn" data-key="0">0</button>
+        <button class="numpad-btn action-btn enter-btn" data-key="enter">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 2 — Flower Shower Overlay ═══ -->
+  <div id="flowerShower" class="flower-shower"></div>
+
+  <!-- ═══ MAIN SCROLLABLE CONTENT ═══ -->
+  <main id="mainContent" class="main-content">
+
+    <!-- ═══ SECTION 3 — Greeting & Photos ═══ -->
+    <section id="greetingSection" class="section greeting-section">
+      <canvas id="greetingBgCanvas" class="bg-canvas"></canvas>
+      <div class="greeting-inner">
+        <h1 class="birthday-title" id="birthdayTitle">Happy Birthday Idiot!</h1>
+        <div class="polaroid-grid">
+          <div class="polaroid" style="--rot:-3deg;--tape-color:#f8cdd0">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>1</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:2deg;--tape-color:#cde8c5">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>2</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:-1.5deg;--tape-color:#c5dbe8">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>3</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:4deg;--tape-color:#f5e0a0">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>4</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:-2.5deg;--tape-color:#e0c5e8">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>5</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:1deg;--tape-color:#f8cdd0">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>6</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:-4deg;--tape-color:#cde8c5">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>7</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:3deg;--tape-color:#c5dbe8">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>8</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:-0.5deg;--tape-color:#f5e0a0">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>9</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+          <div class="polaroid" style="--rot:2.5deg;--tape-color:#e0c5e8">
+            <div class="tape"></div>
+            <div class="polaroid-img"><span>10</span></div>
+            <p class="polaroid-caption">Caption here</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 4 — The Letter ═══ -->
+    <section id="letterSection" class="section letter-section">
+      <canvas id="letterBgCanvas" class="bg-canvas"></canvas>
+      <div class="letter-box-wrapper">
+        <h2 class="letter-heading">A Letter For You</h2>
+        <div class="letter-box" id="letterBox">
+          <div class="letter-typed-text" id="letterTypedText"></div>
+          <span class="letter-cursor" id="letterCursor">|</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 5 — Yash's Songs ═══ -->
+    <section id="songsSection1" class="section songs-section songs-section-1">
+      <canvas id="songsBgCanvas1" class="bg-canvas"></canvas>
+      <div class="songs-inner">
+        <h2 class="songs-heading">Yash's Songs</h2>
+        <div class="songs-grid">
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎵</span></div>
+            <h3 class="tile-name">Song Title Here</h3>
+            <p class="tile-artist">Artist Name</p>
+            <p class="tile-caption">"Why this song..."</p><a href="#" class="tile-spotify" target="_blank">▶ Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎶</span></div>
+            <h3 class="tile-name">Another Song</h3>
+            <p class="tile-artist">Another Artist</p>
+            <p class="tile-caption">"A special memory..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎵</span></div>
+            <h3 class="tile-name">Third Song</h3>
+            <p class="tile-artist">Artist Three</p>
+            <p class="tile-caption">"This one hits different..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎶</span></div>
+            <h3 class="tile-name">Fourth Song</h3>
+            <p class="tile-artist">Artist Four</p>
+            <p class="tile-caption">"Our song, always..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎵</span></div>
+            <h3 class="tile-name">Fifth Song</h3>
+            <p class="tile-artist">Artist Five</p>
+            <p class="tile-caption">"Every time I hear this..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 6 — Pratham's Songs ═══ -->
+    <section id="songsSection2" class="section songs-section songs-section-2">
+      <canvas id="songsBgCanvas2" class="bg-canvas"></canvas>
+      <div class="songs-inner">
+        <h2 class="songs-heading">Prathu's Songs</h2>
+        <div class="songs-grid">
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎵</span></div>
+            <h3 class="tile-name">Song Title Here</h3>
+            <p class="tile-artist">Artist Name</p>
+            <p class="tile-caption">"A song that's so us..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎶</span></div>
+            <h3 class="tile-name">Another Song</h3>
+            <p class="tile-artist">Another Artist</p>
+            <p class="tile-caption">"Late night vibes..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎵</span></div>
+            <h3 class="tile-name">Third Song</h3>
+            <p class="tile-artist">Artist Three</p>
+            <p class="tile-caption">"Can't stop replaying..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎶</span></div>
+            <h3 class="tile-name">Fourth Song</h3>
+            <p class="tile-artist">Artist Four</p>
+            <p class="tile-caption">"This one's for us..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+          <div class="song-tile">
+            <div class="tile-art"><span class="tile-emoji">🎵</span></div>
+            <h3 class="tile-name">Fifth Song</h3>
+            <p class="tile-artist">Artist Five</p>
+            <p class="tile-caption">"Always thinking of you..."</p><a href="#" class="tile-spotify" target="_blank">▶
+              Spotify</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 7 — 5 Things We Like About You (Horizontal Slider) ═══ -->
+    <section id="likeSection" class="section like-section">
+      <div class="like-slider-wrapper">
+        <div class="like-slider" id="likeSlider">
+
+          <!-- Slide 1 — Intro -->
+          <div class="like-slide" id="likeSlide1">
+            <div class="like-slide-deco like-deco-hearts"></div>
+            <div class="like-slide-content">
+              <h2 class="like-slide-text">5 things we like about you</h2>
+              <div class="like-sticker-wrap">
+                <img src="stickers/sticker_star.jpg" alt="cute star" class="like-sticker" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 — Your Smile -->
+          <div class="like-slide" id="likeSlide2">
+            <div class="like-slide-deco like-deco-sparkles"></div>
+            <div class="like-slide-content">
+              <h2 class="like-slide-text">your smile 😊</h2>
+              <div class="like-sticker-wrap">
+                <img src="stickers/sticker_smile.jpg" alt="cute smile" class="like-sticker" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3 — Haha twist -->
+          <div class="like-slide" id="likeSlide3">
+            <div class="like-slide-deco like-deco-stars"></div>
+            <div class="like-slide-content">
+              <h2 class="like-slide-text">haha you thought we only had few 😜</h2>
+              <div class="like-sticker-wrap">
+                <img src="stickers/sticker_laugh.jpg" alt="cute laugh" class="like-sticker" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4 — 50 Reasons Explosion -->
+          <div class="like-slide like-slide-final" id="likeSlide4">
+            <div class="like-final-bg">
+              <img src="stickers/sticker_explosion.jpg" alt="sticker explosion" class="like-final-bg-img" />
+            </div>
+            <div class="like-final-overlay"></div>
+            <div class="like-slide-content like-final-content">
+              <h2 class="like-final-title">50 things we love about you ♥</h2>
+              <div class="like-reasons-grid" id="likeReasonsGrid">
+                <span class="reason-tag">your laugh</span>
+                <span class="reason-tag">your hugs</span>
+                <span class="reason-tag">your kindness</span>
+                <span class="reason-tag">your eyes</span>
+                <span class="reason-tag">your voice</span>
+                <span class="reason-tag">your weird jokes</span>
+                <span class="reason-tag">your courage</span>
+                <span class="reason-tag">your patience</span>
+                <span class="reason-tag">your taste in music</span>
+                <span class="reason-tag">your energy</span>
+                <span class="reason-tag">your honesty</span>
+                <span class="reason-tag">your creativity</span>
+                <span class="reason-tag">your stubbornness</span>
+                <span class="reason-tag">your sleepy face</span>
+                <span class="reason-tag">your excitement</span>
+                <span class="reason-tag">your random facts</span>
+                <span class="reason-tag">your singing</span>
+                <span class="reason-tag">your dance moves</span>
+                <span class="reason-tag">your food choices</span>
+                <span class="reason-tag">your morning texts</span>
+                <span class="reason-tag">your late-night calls</span>
+                <span class="reason-tag">your caring nature</span>
+                <span class="reason-tag">your dramatics</span>
+                <span class="reason-tag">your photo poses</span>
+                <span class="reason-tag">your loyalty</span>
+                <span class="reason-tag">your sarcasm</span>
+                <span class="reason-tag">your curiosity</span>
+                <span class="reason-tag">your strength</span>
+                <span class="reason-tag">your softness</span>
+                <span class="reason-tag">your bravery</span>
+                <span class="reason-tag">your heart</span>
+                <span class="reason-tag">your stories</span>
+                <span class="reason-tag">your goofiness</span>
+                <span class="reason-tag">your ambition</span>
+                <span class="reason-tag">your snacks game</span>
+                <span class="reason-tag">your style</span>
+                <span class="reason-tag">your giggles</span>
+                <span class="reason-tag">your presence</span>
+                <span class="reason-tag">your attention</span>
+                <span class="reason-tag">your warmth</span>
+                <span class="reason-tag">your dedication</span>
+                <span class="reason-tag">your weirdness</span>
+                <span class="reason-tag">your confidence</span>
+                <span class="reason-tag">your comfort</span>
+                <span class="reason-tag">your passion</span>
+                <span class="reason-tag">your opinions</span>
+                <span class="reason-tag">your protectiveness</span>
+                <span class="reason-tag">your late replies 😂</span>
+                <span class="reason-tag">your selfies</span>
+                <span class="reason-tag">just YOU ♥</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- Slide indicators -->
+        <div class="like-dots" id="likeDots">
+          <span class="like-dot active" data-slide="0"></span>
+          <span class="like-dot" data-slide="1"></span>
+          <span class="like-dot" data-slide="2"></span>
+          <span class="like-dot" data-slide="3"></span>
+        </div>
+        <!-- Swipe hint -->
+        <div class="like-swipe-hint" id="likeSwipeHint">
+          <span>swipe →</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SECTION 8 — Final Page ═══ -->
+    <section id="finalSection" class="section final-section">
+      <canvas id="heartsCanvas"></canvas>
+      <div class="final-inner">
+        <h2 class="final-title" id="finalTitle">Happy Birthday RhyRhy!</h2>
+        <p class="final-sub">made with all my love ♥</p>
+        <button class="replay-btn" id="replayBtn">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+          Replay
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
