@@ -158,14 +158,35 @@
       </div>
     </section>
 
-    <!-- ═══ SECTION 4 — The Letter ═══ -->
+    <!-- ═══ SECTION 4 — The Letters ═══ -->
     <section id="letterSection" class="section letter-section">
       <canvas id="letterBgCanvas" class="bg-canvas"></canvas>
-      <div class="letter-box-wrapper">
-        <h2 class="letter-heading">A Letter For You</h2>
-        <div class="letter-box" id="letterBox">
-          <div class="letter-typed-text" id="letterTypedText"></div>
-          <span class="letter-cursor" id="letterCursor">|</span>
+      <div class="envelope-wrapper">
+        <h2 class="letter-heading">Letters For You</h2>
+        <div class="envelope-pair">
+
+          <div class="envelope" data-envelope="1">
+            <div class="envelope-flap">
+              <div class="envelope-flap-inner"></div>
+            </div>
+            <div class="envelope-body">
+              <div class="envelope-seal">♥</div>
+              <div class="letter-paper" contenteditable="true" data-placeholder="Write your letter here..."></div>
+            </div>
+            <p class="envelope-hint">click to open</p>
+          </div>
+
+          <div class="envelope" data-envelope="2">
+            <div class="envelope-flap">
+              <div class="envelope-flap-inner"></div>
+            </div>
+            <div class="envelope-body">
+              <div class="envelope-seal">♥</div>
+              <div class="letter-paper" contenteditable="true" data-placeholder="Write your letter here..."></div>
+            </div>
+            <p class="envelope-hint">click to open</p>
+          </div>
+
         </div>
       </div>
     </section>
@@ -392,6 +413,21 @@
       </div>
     </section>
 
+    <!-- ═══ MODAL POPUP FOR LETTERS ═══ -->
+    <div id="letterModal" class="letter-modal" aria-hidden="true">
+      <div class="letter-modal-overlay" id="letterModalOverlay"></div>
+      <div class="letter-modal-content">
+        <button id="closeLetterBtn" class="close-letter-btn" aria-label="Close Letter">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <div id="letterModalPaper" class="letter-modal-paper" contenteditable="true"
+          data-placeholder="Write your letter here..."></div>
+      </div>
+    </div>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

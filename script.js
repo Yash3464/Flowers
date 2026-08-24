@@ -9,20 +9,6 @@
      ────────────────────────────────── */
   const PASSWORD = '123456'; // PLACEHOLDER: Change the password
 
-  // PLACEHOLDER: Edit this letter text
-  const LETTER_TEXT = `Dear Idiot,
-
-Where do I even begin? You've made every single day brighter just by existing. Your laugh is my favorite sound in the entire world, and your smile could honestly light up the darkest room.
-
-I know I don't say it enough, but you mean everything to me. Every silly moment, every late-night conversation, every time you made me laugh until my stomach hurt — I carry all of it with me.
-
-You deserve the world and then some. I hope this birthday brings you as much joy as you bring to everyone around you.
-
-Happy birthday, you beautiful human. Here's to another year of us being absolute idiots together.
-
-With all my love,
-Yours forever ♥`;
-
   // Flower images for the shower
   const FLOWER_IMAGES = [
     'flowers/rose.jpg',
@@ -396,11 +382,11 @@ Yours forever ♥`;
     ctx.save(); ctx.translate(x, y); ctx.rotate(rotation);
     ctx.beginPath();
     const s = size / 15;
-    ctx.moveTo(0, -2*s);
-    ctx.bezierCurveTo(0,-5*s,-9*s,-8*s,-9*s,-2*s);
-    ctx.bezierCurveTo(-9*s,4*s,0,8*s,0,12*s);
-    ctx.bezierCurveTo(0,8*s,9*s,4*s,9*s,-2*s);
-    ctx.bezierCurveTo(9*s,-8*s,0,-5*s,0,-2*s);
+    ctx.moveTo(0, -2 * s);
+    ctx.bezierCurveTo(0, -5 * s, -9 * s, -8 * s, -9 * s, -2 * s);
+    ctx.bezierCurveTo(-9 * s, 4 * s, 0, 8 * s, 0, 12 * s);
+    ctx.bezierCurveTo(0, 8 * s, 9 * s, 4 * s, 9 * s, -2 * s);
+    ctx.bezierCurveTo(9 * s, -8 * s, 0, -5 * s, 0, -2 * s);
     ctx.fill(); ctx.restore();
   }
 
@@ -463,41 +449,54 @@ Yours forever ♥`;
       stagger: 0.1, delay: 0.5,
     });
 
-    // ── Section 4: Letter box + typewriter ──
+    // ── Section 4: Envelope letters ──
     const letterHeading = document.querySelector('.letter-heading');
-    const letterBox = document.getElementById('letterBox');
-    const letterTypedText = document.getElementById('letterTypedText');
-    const letterCursor = document.getElementById('letterCursor');
-    let letterTyping = false;
+    const envelopes = document.querySelectorAll('.envelope');
 
     gsap.to(letterHeading, {
       scrollTrigger: { trigger: '#letterSection', start: 'top 70%' },
       opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
     });
 
-    gsap.to(letterBox, {
-      scrollTrigger: { trigger: '#letterSection', start: 'top 60%' },
-      opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'back.out(1.1)',
-      onComplete: () => { if (!letterTyping) startLetterTypewriter(); },
-    });
+    const letterModal = document.getElementById('letterModal');
+    const letterModalPaper = document.getElementById('letterModalPaper');
+    const closeLetterBtn = document.getElementById('closeLetterBtn');
 
-    function startLetterTypewriter() {
-      letterTyping = true;
-      let idx = 0;
-      function typeNext() {
-        if (idx < LETTER_TEXT.length) {
-          letterTypedText.textContent += LETTER_TEXT[idx];
-          idx++;
-          // Scroll the letter box to bottom as text grows
-          letterBox.scrollTop = letterBox.scrollHeight;
-          const delay = LETTER_TEXT[idx - 1] === '\n' ? 120 : (20 + Math.random() * 25);
-          setTimeout(typeNext, delay);
-        } else {
-          letterCursor.style.display = 'none';
+    if (closeLetterBtn) {
+      closeLetterBtn.addEventListener('click', () => {
+        letterModal.classList.remove('active');
+        document.documentElement.style.overflow = '';
+        const sourceIdx = letterModal.dataset.sourceEnv;
+        if (sourceIdx !== undefined) {
+          const sourceEnv = envelopes[sourceIdx];
+          if (sourceEnv) {
+            sourceEnv.querySelector('.letter-paper').innerHTML = letterModalPaper.innerHTML;
+            sourceEnv.classList.remove('open');
+          }
         }
-      }
-      typeNext();
+      });
     }
+
+    envelopes.forEach((env, i) => {
+      gsap.to(env, {
+        scrollTrigger: { trigger: '#letterSection', start: 'top 60%' },
+        opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.1)',
+        delay: 0.2 + i * 0.15,
+      });
+
+      env.addEventListener('click', () => {
+        if (letterModal && letterModal.classList.contains('active')) return;
+        env.classList.add('open');
+        setTimeout(() => {
+          if (!letterModal) return;
+          const sourceLetter = env.querySelector('.letter-paper');
+          letterModalPaper.innerHTML = sourceLetter.innerHTML;
+          letterModal.dataset.sourceEnv = i;
+          letterModal.classList.add('active');
+          document.documentElement.style.overflow = 'hidden';
+        }, 500);
+      });
+    });
 
     // ── Section 5 & 6: Two Song Sections ──
     document.querySelectorAll('.songs-section').forEach(section => {
@@ -523,8 +522,8 @@ Yours forever ♥`;
       opacity: 1, scale: 1, duration: 1.2, ease: 'elastic.out(1,0.5)',
       onComplete: () => document.getElementById('finalTitle').classList.add('visible'),
     })
-    .to('.final-sub', { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.4')
-    .to('.replay-btn', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.2');
+      .to('.final-sub', { opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.4')
+      .to('.replay-btn', { opacity: 1, duration: 0.5, ease: 'power2.out' }, '-=0.2');
 
     // ── Section 7: Like Slider ──
     initLikeSlider();
@@ -716,7 +715,7 @@ Yours forever ♥`;
      ═══════════════════════════════════════ */
   function startMusic() {
     bgMusic.volume = 0;
-    bgMusic.play().then(() => gsap.to(bgMusic, { volume: 0.4, duration: 3 })).catch(() => {});
+    bgMusic.play().then(() => gsap.to(bgMusic, { volume: 0.4, duration: 3 })).catch(() => { });
     muteBtn.classList.remove('hidden');
   }
 
@@ -755,9 +754,8 @@ Yours forever ♥`;
     gsap.set('.song-tile', { opacity: 0, y: 20 });
     gsap.set('.polaroid', { opacity: 0, y: 60, scale: 0.85 });
     gsap.set('.letter-heading', { opacity: 0, y: 20 });
-    gsap.set('#letterBox', { opacity: 0, y: 30, scale: 0.97 });
-    document.getElementById('letterTypedText').textContent = '';
-    document.getElementById('letterCursor').style.display = '';
+    gsap.set('.envelope', { opacity: 0, y: 30, scale: 0.95 });
+    document.querySelectorAll('.envelope').forEach(e => e.classList.remove('open'));
 
     // Reset like slider
     const likeSlider = document.getElementById('likeSlider');
