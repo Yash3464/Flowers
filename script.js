@@ -42,6 +42,25 @@
   let enteredPwd = '';
   let isUnlocked = false;
   let isMuted = false;
+  let letterRevealed = false;
+
+  /* ═══════════════════════════════════════
+     LETTER REVEAL ANIMATION
+     ═══════════════════════════════════════ */
+  function revealLetterLines() {
+    if (letterRevealed) return;
+    letterRevealed = true;
+    const lines = document.querySelectorAll('#letterText .letter-line, #letterText .letter-divider, #letterText .letter-climax-heart');
+    lines.forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 25);
+    });
+  }
+
+  function resetLetterLines() {
+    letterRevealed = false;
+    const lines = document.querySelectorAll('#letterText .letter-line, #letterText .letter-divider, #letterText .letter-climax-heart');
+    lines.forEach(el => el.classList.remove('visible'));
+  }
 
   /* ═══════════════════════════════════════
      1. LOCK SCREEN
@@ -208,7 +227,6 @@
     initScrollAnimations();
     initScrollProgress();
     initGreetingBg();
-    initLetterBg();
     initSongsBg();
   }
 
@@ -267,45 +285,6 @@
       greetingCtx.fill();
     });
     requestAnimationFrame(animateGreetingBg);
-  }
-
-  // ── Letter section: soft floating particles ──
-  const letterBgCanvas = document.getElementById('letterBgCanvas');
-  let letterCtx, letterParticles = [];
-
-  function initLetterBg() {
-    letterCtx = letterBgCanvas.getContext('2d');
-    const section = document.getElementById('letterSection');
-    resizeCanvas(letterBgCanvas, section);
-    window.addEventListener('resize', () => resizeCanvas(letterBgCanvas, section));
-    for (let i = 0; i < 30; i++) {
-      letterParticles.push({
-        x: Math.random() * letterBgCanvas.width,
-        y: Math.random() * letterBgCanvas.height,
-        r: 4 + Math.random() * 12,
-        opacity: 0.02 + Math.random() * 0.06,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: -0.2 - Math.random() * 0.3,
-        color: ['rgba(200,160,120,', 'rgba(180,140,100,', 'rgba(220,180,140,'][Math.floor(Math.random() * 3)],
-      });
-    }
-    animateLetterBg();
-  }
-
-  function animateLetterBg() {
-    letterCtx.clearRect(0, 0, letterBgCanvas.width, letterBgCanvas.height);
-    letterParticles.forEach(p => {
-      p.x += p.vx; p.y += p.vy;
-      if (p.y < -p.r) { p.y = letterBgCanvas.height + p.r; p.x = Math.random() * letterBgCanvas.width; }
-      if (p.x < -p.r) p.x = letterBgCanvas.width + p.r;
-      if (p.x > letterBgCanvas.width + p.r) p.x = -p.r;
-      letterCtx.globalAlpha = p.opacity;
-      letterCtx.fillStyle = p.color + '1)';
-      letterCtx.beginPath();
-      letterCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      letterCtx.fill();
-    });
-    requestAnimationFrame(animateLetterBg);
   }
 
   // ── Songs sections: soft floating orbs (two canvases) ──
@@ -449,55 +428,6 @@
       stagger: 0.1, delay: 0.5,
     });
 
-    // ── Section 4: Envelope letters ──
-    const letterHeading = document.querySelector('.letter-heading');
-    const envelopes = document.querySelectorAll('.envelope');
-
-    gsap.to(letterHeading, {
-      scrollTrigger: { trigger: '#letterSection', start: 'top 70%' },
-      opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-    });
-
-    const letterModal = document.getElementById('letterModal');
-    const letterModalPaper = document.getElementById('letterModalPaper');
-    const closeLetterBtn = document.getElementById('closeLetterBtn');
-
-    if (closeLetterBtn) {
-      closeLetterBtn.addEventListener('click', () => {
-        letterModal.classList.remove('active');
-        document.documentElement.style.overflow = '';
-        const sourceIdx = letterModal.dataset.sourceEnv;
-        if (sourceIdx !== undefined) {
-          const sourceEnv = envelopes[sourceIdx];
-          if (sourceEnv) {
-            sourceEnv.querySelector('.letter-paper').innerHTML = letterModalPaper.innerHTML;
-            sourceEnv.classList.remove('open');
-          }
-        }
-      });
-    }
-
-    envelopes.forEach((env, i) => {
-      gsap.to(env, {
-        scrollTrigger: { trigger: '#letterSection', start: 'top 60%' },
-        opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.1)',
-        delay: 0.2 + i * 0.15,
-      });
-
-      env.addEventListener('click', () => {
-        if (letterModal && letterModal.classList.contains('active')) return;
-        env.classList.add('open');
-        setTimeout(() => {
-          if (!letterModal) return;
-          const sourceLetter = env.querySelector('.letter-paper');
-          letterModalPaper.innerHTML = sourceLetter.innerHTML;
-          letterModal.dataset.sourceEnv = i;
-          letterModal.classList.add('active');
-          document.documentElement.style.overflow = 'hidden';
-        }, 500);
-      });
-    });
-
     // ── Section 5 & 6: Two Song Sections ──
     document.querySelectorAll('.songs-section').forEach(section => {
       const heading = section.querySelector('.songs-heading');
@@ -544,37 +474,16 @@
     const totalSlides = 4;
     let startX = 0;
     let isDraggingSlider = false;
-    let reasonsAnimated = false;
 
     function goToSlide(idx) {
       currentSlide = Math.max(0, Math.min(idx, totalSlides - 1));
       slider.style.transform = `translateX(-${currentSlide * 25}%)`;
-
-      // Update dots
-      dots.forEach((d, i) => {
-        d.classList.toggle('active', i === currentSlide);
-      });
-
-      // Hide swipe hint after first swipe
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
       if (currentSlide > 0 && hint) {
         hint.style.opacity = '0';
         hint.style.pointerEvents = 'none';
       }
-
-      // Animate reason tags on slide 4
-      if (currentSlide === 3 && !reasonsAnimated) {
-        reasonsAnimated = true;
-        animateReasonTags();
-      }
-    }
-
-    function animateReasonTags() {
-      const tags = document.querySelectorAll('.reason-tag');
-      tags.forEach((tag, i) => {
-        setTimeout(() => {
-          tag.classList.add('visible');
-        }, 30 * i);
-      });
+      if (currentSlide === 3) revealLetterLines();
     }
 
     // Touch events
@@ -625,14 +534,8 @@
       const rect = section.getBoundingClientRect();
       const inView = rect.top < window.innerHeight * 0.5 && rect.bottom > window.innerHeight * 0.5;
       if (!inView) return;
-
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        goToSlide(currentSlide + 1);
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        goToSlide(currentSlide - 1);
-      }
+      if (e.key === 'ArrowRight') { e.preventDefault(); goToSlide(currentSlide + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
     });
 
     // Wheel event to capture scroll and convert to slide navigation
@@ -643,8 +546,6 @@
       const rect = likeSection.getBoundingClientRect();
       const inView = rect.top < 10 && rect.bottom > window.innerHeight - 10;
       if (!inView) return;
-
-      // Only intercept if not at edges
       if (e.deltaY > 0 && currentSlide < totalSlides - 1) {
         e.preventDefault();
         if (!wheelLocked) {
@@ -753,17 +654,14 @@
     gsap.set('.songs-heading', { opacity: 0, y: 20 });
     gsap.set('.song-tile', { opacity: 0, y: 20 });
     gsap.set('.polaroid', { opacity: 0, y: 60, scale: 0.85 });
-    gsap.set('.letter-heading', { opacity: 0, y: 20 });
-    gsap.set('.envelope', { opacity: 0, y: 30, scale: 0.95 });
-    document.querySelectorAll('.envelope').forEach(e => e.classList.remove('open'));
 
     // Reset like slider
     const likeSlider = document.getElementById('likeSlider');
     if (likeSlider) likeSlider.style.transform = 'translateX(0)';
     document.querySelectorAll('.like-dot').forEach((d, i) => d.classList.toggle('active', i === 0));
-    document.querySelectorAll('.reason-tag').forEach(t => t.classList.remove('visible'));
     const likeHint = document.getElementById('likeSwipeHint');
     if (likeHint) { likeHint.style.opacity = ''; likeHint.style.pointerEvents = ''; }
+    resetLetterLines();
 
     ScrollTrigger.getAll().forEach(st => st.kill());
     bgMusic.pause(); bgMusic.currentTime = 0;

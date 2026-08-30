@@ -14,7 +14,6 @@
   --lock-btn-hover: rgba(255, 255, 255, 0.72);
   --greeting-bg: #5c1a2a;
   --gold: #f0d08c;
-  --letter-bg: linear-gradient(135deg, #fdf6ee 0%, #faf0e6 100%);
   --songs-bg: linear-gradient(160deg, #0a3d5c 0%, #0d5470 30%, #0e6e6e 60%, #1a6b5a 100%);
   --final-bg: #0a1628;
   --smooth: cubic-bezier(0.4, 0, 0.2, 1);
@@ -452,298 +451,6 @@ body {
 }
 
 /* ═══════════════════════════════════
-   SECTION 4 — THE LETTERS (Envelopes)
-   ═══════════════════════════════════ */
-.letter-section {
-  background: var(--letter-bg);
-  min-height: 100vh;
-  padding: 60px 20px;
-  background-image: radial-gradient(ellipse at 30% 20%, rgba(200, 160, 120, .06) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 80%, rgba(180, 140, 100, .06) 0%, transparent 60%);
-  overflow: visible;
-}
-
-.envelope-wrapper {
-  max-width: 900px;
-  width: 95vw;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-}
-
-.letter-heading {
-  font-family: var(--font-script);
-  font-size: clamp(2rem, 4vw, 3rem);
-  color: #7a5a50;
-  margin-bottom: 40px;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.envelope-pair {
-  display: flex;
-  gap: 40px;
-  justify-content: center;
-  align-items: flex-start;
-  perspective: 1200px;
-  margin-top: 80px;
-}
-
-@media(max-width:680px) {
-  .envelope-pair {
-    flex-direction: column;
-    align-items: center;
-    gap: 50px;
-  }
-}
-
-/* ── Single Envelope ── */
-.envelope {
-  width: 340px;
-  cursor: pointer;
-  position: relative;
-  opacity: 0;
-  transform: translateY(30px) scale(.95);
-  transition: z-index 0s 0.8s;
-}
-
-@media(max-width:680px) {
-  .envelope {
-    width: 90vw;
-    max-width: 340px;
-  }
-}
-
-.envelope-hint {
-  font-family: var(--font-script);
-  font-size: 14px;
-  color: rgba(122, 90, 80, .45);
-  margin-top: 12px;
-  transition: opacity .3s;
-}
-
-.envelope.open {
-  z-index: 2000;
-  transition: z-index 0s;
-}
-
-.envelope.open .envelope-hint {
-  opacity: 0;
-}
-
-/* ── Envelope Body (Inside pocket layer) ── */
-.envelope-body {
-  background: linear-gradient(180deg, #d8be9f 0%, #c4a98a 100%);
-  border-radius: 8px;
-  padding: 0;
-  box-shadow: 0 6px 24px rgba(0, 0, 0, .12), 0 2px 6px rgba(0, 0, 0, .06);
-  position: relative;
-  min-height: 220px;
-  border: 1px solid rgba(180, 150, 120, .2);
-}
-
-/* Front Pocket (V-Neck cut) */
-.envelope-body::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(170deg, #f5e6d0 0%, #ecdbc5 50%, #e6d0b8 100%);
-  border-radius: 8px;
-  clip-path: polygon(0 0, 50% 35%, 100% 0, 100% 100%, 0 100%);
-  z-index: 20;
-  pointer-events: none;
-}
-
-/* ── Seal (heart on body) ── */
-.envelope-seal {
-  position: absolute;
-  top: 120px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 48px;
-  height: 48px;
-  background: radial-gradient(circle at 35% 35%, #e04a4a, #9e2a2b);
-  border-radius: 50%;
-  color: #fff;
-  font-size: 24px;
-  line-height: 48px;
-  text-align: center;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.3);
-  z-index: 40;
-  pointer-events: none;
-  font-family: Arial, sans-serif;
-  transition: opacity .4s, transform .4s;
-}
-
-.envelope-seal::after {
-  content: '♥';
-  display: block;
-  position: absolute;
-  inset: 4px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  line-height: 38px;
-}
-
-.envelope.open .envelope-seal {
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(1.5);
-  transition: opacity .3s, transform .3s;
-}
-
-/* ── Flap (the folding lid) ── */
-.envelope-flap {
-  position: absolute;
-  width: 100%;
-  height: 120px;
-  top: 0;
-  left: 0;
-  transform-style: preserve-3d;
-  transform: rotateX(0deg);
-  transform-origin: top center;
-  transition: transform .7s cubic-bezier(.4, 0, .2, 1) 0.5s, z-index 0s 0.5s;
-  z-index: 30;
-}
-
-.envelope.open .envelope-flap {
-  transform: rotateX(-180deg);
-  z-index: 5;
-  transition: transform .7s cubic-bezier(.4, 0, .2, 1), z-index 0s 0.3s;
-}
-
-.envelope-flap-inner {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, #ecdbc5 0%, #e4d0b6 100%);
-  clip-path: polygon(0 0, 50% 100%, 100% 0);
-  border-radius: 8px 8px 0 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
-}
-
-/* ── Letter Paper (inside envelope) ── */
-.letter-paper {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 20px);
-  height: 180px;
-  background-color: #f6efe8;
-  background-image: url('letter_bg_new.jpg');
-  background-size: cover;
-  background-position: center;
-  border-radius: 6px;
-  padding: 16px 30% 16px 20px;
-  font-family: var(--font-script);
-  font-size: 20px;
-  line-height: 1.5;
-  color: #2b1f1f;
-  overflow: hidden;
-  transition: bottom 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
-  z-index: 10;
-  outline: none;
-}
-
-.envelope.open .letter-paper {
-  /* Just slide it up out of the pocket! Modal handles full screen */
-  bottom: 120px;
-  z-index: 10;
-}
-
-/* ── Letter Modal ── */
-.letter-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-
-.letter-modal.active {
-  pointer-events: auto;
-  opacity: 1;
-}
-
-.letter-modal-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
-}
-
-.letter-modal-content {
-  position: relative;
-  z-index: 2;
-  width: 90vw;
-  max-width: 800px;
-  height: 85vh;
-  transform: scale(0.8) translateY(20px);
-  transition: transform 0.6s cubic-bezier(0.34, 1.5, 0.9, 1);
-}
-
-.letter-modal.active .letter-modal-content {
-  transform: scale(1) translateY(0);
-}
-
-.letter-modal-paper {
-  width: 100%;
-  height: 100%;
-  background-color: #f6efe8;
-  background-image: url('letter_bg_new.jpg');
-  background-size: cover;
-  background-position: center;
-  border-radius: 12px;
-  padding: 50px 25% 50px 50px;
-  font-family: var(--font-script);
-  font-size: 24px;
-  line-height: 1.6;
-  color: #2b1f1f;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  overflow-y: auto;
-  outline: none;
-}
-
-.close-letter-btn {
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #d65548;
-  color: white;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 10;
-  transition: transform 0.2s, background 0.2s;
-}
-
-.close-letter-btn:hover {
-  transform: scale(1.1);
-  background: #e04a4a;
-}
-
-/* placeholder text */
-.letter-paper:empty::before {
-  content: attr(data-placeholder);
-  color: rgba(120, 90, 80, .5);
-  pointer-events: none;
-  font-style: italic;
-}
-
-.letter-paper:focus {
-  box-shadow: 0 2px 16px rgba(120, 90, 80, .25);
-}
-
-/* ═══════════════════════════════════
    SECTION 5 & 6 — SONGS (Tile Grid)
    ═══════════════════════════════════ */
 .songs-section {
@@ -979,15 +686,8 @@ body {
 }
 
 @keyframes likeTextFloat {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-8px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
 .like-sticker-wrap {
@@ -1001,15 +701,8 @@ body {
 }
 
 @keyframes stickerBounce {
-
-  0%,
-  100% {
-    transform: scale(1) rotate(-2deg);
-  }
-
-  50% {
-    transform: scale(1.05) rotate(2deg);
-  }
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.05) rotate(2deg); }
 }
 
 .like-sticker {
@@ -1018,7 +711,7 @@ body {
   object-fit: cover;
 }
 
-/* ── Decorative floating elements (white) ── */
+/* ── Decorative floating elements ── */
 .like-slide-deco {
   position: absolute;
   inset: 0;
@@ -1040,204 +733,167 @@ body {
   animation: decoFloat 6s ease-in-out infinite;
 }
 
-.like-deco-hearts::before {
-  content: '♥';
-  top: 15%;
-  left: 10%;
-  animation-delay: 0s;
-  font-size: 60px;
-}
-
-.like-deco-hearts::after {
-  content: '♥';
-  bottom: 20%;
-  right: 12%;
-  animation-delay: 1.5s;
-  font-size: 45px;
-}
-
-.like-deco-sparkles::before {
-  content: '✦';
-  top: 10%;
-  right: 15%;
-  animation-delay: 0.5s;
-  font-size: 50px;
-}
-
-.like-deco-sparkles::after {
-  content: '✦';
-  bottom: 15%;
-  left: 8%;
-  animation-delay: 2s;
-  font-size: 35px;
-}
-
-.like-deco-stars::before {
-  content: '★';
-  top: 20%;
-  left: 15%;
-  animation-delay: 1s;
-  font-size: 55px;
-}
-
-.like-deco-stars::after {
-  content: '★';
-  bottom: 25%;
-  right: 10%;
-  animation-delay: 0.8s;
-  font-size: 40px;
-}
+.like-deco-hearts::before { content: '♥'; top: 15%; left: 10%; animation-delay: 0s; font-size: 60px; }
+.like-deco-hearts::after { content: '♥'; bottom: 20%; right: 12%; animation-delay: 1.5s; font-size: 45px; }
+.like-deco-sparkles::before { content: '✦'; top: 10%; right: 15%; animation-delay: 0.5s; font-size: 50px; }
+.like-deco-sparkles::after { content: '✦'; bottom: 15%; left: 8%; animation-delay: 2s; font-size: 35px; }
+.like-deco-stars::before { content: '★'; top: 20%; left: 15%; animation-delay: 1s; font-size: 55px; }
+.like-deco-stars::after { content: '★'; bottom: 25%; right: 10%; animation-delay: 0.8s; font-size: 40px; }
 
 @keyframes decoFloat {
-
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.12;
-  }
-
-  50% {
-    transform: translateY(-20px) rotate(10deg);
-    opacity: 0.25;
-  }
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.12; }
+  50% { transform: translateY(-20px) rotate(10deg); opacity: 0.25; }
 }
 
-/* Additional white floating decorations via box-shadows */
-.like-slide::before,
-.like-slide::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  z-index: 0;
-}
-
-.like-slide::before {
-  width: 300px;
-  height: 300px;
-  top: -80px;
-  right: -60px;
-  animation: orbDrift 8s ease-in-out infinite;
-}
-
-.like-slide::after {
-  width: 200px;
-  height: 200px;
-  bottom: -50px;
-  left: -40px;
-  animation: orbDrift 10s ease-in-out infinite reverse;
-}
-
-@keyframes orbDrift {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  33% {
-    transform: translate(20px, -15px) scale(1.1);
-  }
-
-  66% {
-    transform: translate(-10px, 10px) scale(0.95);
-  }
-}
-
-/* ── Slide 4 (Final) ── */
+/* ── Slide 4 (Final — The Litany) ── */
 .like-slide-final {
   background: none;
 }
 
-.like-final-bg {
+.letter-scroll {
   position: absolute;
   inset: 0;
-  z-index: 0;
-}
-
-.like-final-bg-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.like-final-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(45, 10, 14, 0.65);
-  z-index: 1;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-}
-
-.like-final-content {
-  max-width: 800px;
-  width: 90vw;
-}
-
-.like-final-title {
-  font-family: var(--font-script);
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  color: var(--gold);
-  text-shadow: 0 2px 12px rgba(240, 208, 140, 0.3), 0 0 40px rgba(240, 208, 140, 0.15);
-  margin-bottom: 24px;
-  animation: likeTextFloat 3s ease-in-out infinite;
-}
-
-.like-reasons-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  max-height: 55vh;
   overflow-y: auto;
-  padding: 12px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(240, 208, 140, 0.3) transparent;
+  overflow-x: hidden;
+  z-index: 1;
+  padding: 0;
 }
 
-.like-reasons-grid::-webkit-scrollbar {
+/* Fade gradients at top and bottom */
+.letter-scroll::before,
+.letter-scroll::after {
+  content: '';
+  position: sticky;
+  display: block;
+  left: 0;
+  right: 0;
+  height: 60px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.letter-scroll::before {
+  top: 0;
+  background: linear-gradient(to bottom, #3d0c15 0%, transparent 100%);
+}
+
+.letter-scroll::after {
+  bottom: 0;
+  background: linear-gradient(to top, #3d0c15 0%, transparent 100%);
+}
+
+/* Scrollbar */
+.letter-scroll::-webkit-scrollbar {
   width: 4px;
 }
 
-.like-reasons-grid::-webkit-scrollbar-track {
+.letter-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.like-reasons-grid::-webkit-scrollbar-thumb {
-  background: rgba(240, 208, 140, 0.3);
+.letter-scroll::-webkit-scrollbar-thumb {
+  background: rgba(240, 208, 140, 0.2);
   border-radius: 2px;
 }
 
-.reason-tag {
-  display: inline-block;
-  padding: 8px 18px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1.5px solid rgba(240, 208, 140, 0.2);
-  border-radius: 30px;
+.letter-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(240, 208, 140, 0.4);
+}
+
+/* Text block with left accent line */
+.letter-text {
+  position: relative;
+  padding: 70px 60px 80px 50px;
+  max-width: 780px;
+  margin: 0 auto;
+  border-left: 2px solid rgba(240, 208, 140, 0.15);
+}
+
+/* Individual lines */
+.letter-line {
+  display: block;
   font-family: var(--font-script);
-  font-size: 16px;
-  color: var(--gold);
-  white-space: nowrap;
-  transition: transform 0.25s, background 0.25s, box-shadow 0.25s, border-color 0.25s;
-  cursor: default;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 400;
+  line-height: 2;
+  color: rgba(255, 255, 255, 0.82);
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  transform: translateY(15px) scale(0.9);
+  transform: translateY(6px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-.reason-tag.visible {
+.letter-line.visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
-.reason-tag:hover {
-  transform: translateY(-3px) scale(1.08) !important;
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(240, 208, 140, 0.45);
-  box-shadow: 0 6px 20px rgba(240, 208, 140, 0.15), 0 0 20px rgba(240, 208, 140, 0.08);
+/* Emphasis lines — slightly larger, brighter */
+.letter-line.emphasis {
+  font-size: clamp(19px, 2.3vw, 25px);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Section dividers */
+.letter-divider {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: var(--gold);
+  opacity: 0;
+  padding: 10px 0;
+  letter-spacing: 6px;
+  transition: opacity 0.8s ease;
+}
+
+.letter-divider.visible {
+  opacity: 0.3;
+}
+
+/* Climax wrapper */
+.letter-climax-wrap {
+  display: block;
+  margin-top: 24px;
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(240, 208, 140, 0.12);
+}
+
+/* Climax line — centered, gold, larger */
+.letter-climax {
+  font-size: clamp(22px, 2.8vw, 30px) !important;
+  font-weight: 700 !important;
+  color: var(--gold) !important;
+  text-align: center !important;
+  text-shadow: 0 2px 16px rgba(240, 208, 140, 0.3), 0 0 40px rgba(240, 208, 140, 0.1) !important;
+  line-height: 1.6 !important;
+}
+
+/* Climax sub-line */
+.letter-climax-sub {
+  font-size: clamp(18px, 2.2vw, 24px) !important;
+  font-weight: 500 !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  text-align: center !important;
+  line-height: 1.8 !important;
+  margin-top: 4px;
+}
+
+/* Climax heart */
+.letter-climax-heart {
+  display: block;
+  text-align: center;
+  font-size: 28px;
+  margin-top: 16px;
+  opacity: 0;
+  transition: opacity 1s ease 0.3s;
+}
+
+.letter-climax-heart.visible {
+  opacity: 1;
 }
 
 /* ── Dot indicators ── */
@@ -1285,17 +941,8 @@ body {
 }
 
 @keyframes swipeHintPulse {
-
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: translateX(-50%) translateX(0);
-  }
-
-  50% {
-    opacity: 1;
-    transform: translateX(-50%) translateX(10px);
-  }
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) translateX(0); }
+  50% { opacity: 1; transform: translateX(-50%) translateX(10px); }
 }
 
 /* ═══════════════════════════════════
@@ -1404,10 +1051,6 @@ body {
     padding: 60px 16px 40px
   }
 
-  .letter-box {
-    padding: 28px 20px
-  }
-
   .songs-section {
     padding: 60px 12px 40px
   }
@@ -1435,13 +1078,30 @@ body {
     font-size: clamp(1.5rem, 6vw, 2.5rem)
   }
 
-  .reason-tag {
-    font-size: 13px;
-    padding: 6px 12px
+  .letter-text {
+    padding: 60px 20px 70px 18px;
+    border-left-width: 1.5px;
   }
 
-  .like-reasons-grid {
-    max-height: 45vh;
-    gap: 6px
+  .letter-line {
+    font-size: clamp(15px, 4vw, 19px);
+    line-height: 1.85;
+  }
+
+  .letter-line.emphasis {
+    font-size: clamp(17px, 4.5vw, 22px);
+  }
+
+  .letter-climax {
+    font-size: clamp(19px, 5vw, 26px) !important;
+  }
+
+  .letter-climax-sub {
+    font-size: clamp(16px, 4vw, 20px) !important;
+  }
+
+  .letter-scroll::before,
+  .letter-scroll::after {
+    height: 40px;
   }
 }
